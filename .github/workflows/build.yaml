@@ -1,0 +1,22 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build and test archetype
+        run: ./mvnw clean verify
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: bonita-connector-email-reader-latest.zip
+          path: target/bonita-connector-email-reader-*.zip

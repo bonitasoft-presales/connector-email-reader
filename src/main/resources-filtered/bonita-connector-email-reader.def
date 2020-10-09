@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definition:ConnectorDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:definition="http://www.bonitasoft.org/ns/connector/definition/6.1">
+  <id>${connector-definition-id}</id>
+  <version>${connector-definition-version}</version>
+  <category icon="messaging.png" id="messaging"/>
+  <input mandatory="true" name="emailHost" type="java.lang.String"/>
+  <input mandatory="true" name="emailPort" type="java.lang.String"/>
+  <input mandatory="true" name="emailUsername" type="java.lang.String"/>
+  <input mandatory="true" name="emailPassword" type="java.lang.String"/>
+  <output name="mails" type="java.util.List"/>
+  <page id="EmailReceiverPage">
+    <widget xsi:type="definition:Text" id="EmailHost" inputName="emailHost" showDocuments="true"/>
+    <widget xsi:type="definition:Text" id="EmailPort" inputName="emailPort" />
+    <widget xsi:type="definition:Text" id="emailUID" inputName="emailUsername"/>
+    <widget xsi:type="definition:Password" id="emailPassword" inputName="emailPassword"/>
+  </page>
+</definition:ConnectorDefinition>

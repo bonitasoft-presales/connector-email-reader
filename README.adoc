@@ -6,20 +6,20 @@ This connector can read email with attachments.
 
 
 |===
-|Parameter |Description|Example
+|Parameter |Description|Example| Gmail settings
 
-|emailProtocol | Protocol | `imap`, `imaps` (secured: use this for GMail)
-|emailSSL | use SSL (boolean) | `true` (required for imaps, `false`
-|emailFolderName | inbox folder name | `Inbox`
-|emailHost | hostname | `imap.gmail.com`
-|emailPort | port | `997` (for imaps)
-|emailUsername | user name |
-|emailPassword | user password |
-|emailBatchSize | number of fetched emails (Integer) |
+|emailProtocol | Protocol | `imap`, `imaps`| `imaps`
+|emailSSL | use SSL (boolean) | `true` , `false`| `true`
+|emailFolderName | inbox folder name | `Inbox`|
+|emailHost | hostname | |`imap.gmail.com`
+|emailPort | port | | `997` 
+|emailUsername | user name ||
+|emailPassword | user password ||
+|emailBatchSize | number of fetched emails (Integer) ||
 
 |===
 
-
+see https://support.google.com/mail/answer/7126229?hl=fr[Gmail documentation] for more information.
 
 ## Output parameter structure
 

@@ -31,7 +31,7 @@ public class EmailReceiverConnectorImpl extends AbstractEmailReceiverConnectorIm
 			logger.info("Unread message count:" + unreadMessageCount);
 			Message[] messages = inboxFolder.search(new FlagTerm(new Flags(Flag.SEEN), false));
 			int count = 0;
-			int batchSize = getBatchSize();
+			int batchSize = getEmailBatchSize();
 			for (Message message : messages) {
 				if (count >= batchSize) {
 					break;
@@ -69,23 +69,42 @@ public class EmailReceiverConnectorImpl extends AbstractEmailReceiverConnectorIm
 	public void connect() throws ConnectorException {
 		try {
 			Session session = Session.getDefaultInstance(getProperties());
-			emailStore = session.getStore(getProtocol());
+			emailStore = session.getStore(getEmailProtocol());
 			emailStore.connect(getEmailHost(), getEmailPort(), getEmailUsername(), getEmailPassword());
-			inboxFolder = emailStore.getFolder(getFolderName());
+			inboxFolder = emailStore.getFolder(getEmailFolderName());
 			inboxFolder.open(Folder.READ_WRITE);
 			mailUtils = new MailUtils();
 			logger.info("Successfully connected to the email store");
-		} catch (NoSuchProviderException e) {
-			throw new ConnectorException(e);
 		} catch (MessagingException e) {
 			throw new ConnectorException(e);
 		}
 	}
 
 	private Properties getProperties() {
+		logParameters();
 		Properties properties = new Properties();
-		properties.setProperty("mail.imap.ssl.enable", isSslEnabled().toString());
+		Boolean sslEnabled = isEmailSslEnabled();
+		properties.setProperty("mail.imap.ssl.enable", sslEnabled.toString());
 		return properties;
+	}
+
+	private void logParameters() {
+		logParameterValue(EMAIL_HOST_INPUT_PARAMETER, getEmailHost());
+		logParameterValue(EMAIL_PORT_INPUT_PARAMETER, getEmailPort());
+		logParameterValue(EMAIL_PROTOCOL_INPUT_PARAMETER, getEmailProtocol());
+		logParameterValue(EMAIL_USERNAME_INPUT_PARAMETER, getEmailUsername());
+		logParameterValue(EMAIL_FOLDER_NAME_INPUT_PARAMETER, getEmailFolderName());
+		logParameterValue(EMAIL_BATCH_SIZE_INPUT_PARAMETER, getEmailBatchSize());
+		logParameterValue(EMAIL_SSL_ENABLED_INPUT_PARAMETER, isEmailSslEnabled());
+	}
+
+	private void logParameterValue(String parameterName, Object parameterValue) {
+		String msg = new StringBuilder()
+				.append(parameterName)
+				.append(":[")
+				.append(parameterValue)
+				.append("]").toString();
+		logger.info(msg);
 	}
 
 	@Override

@@ -20,36 +20,48 @@ public abstract class AbstractEmailReceiverConnectorImpl extends AbstractConnect
 	protected final static String MAILS_OUTPUT_PARAMETER = "mails";
 
 	protected final String getEmailHost() {
-		return (String) getInputParameter(EMAIL_HOST_INPUT_PARAMETER);
+		return getStringInputParameter(EMAIL_HOST_INPUT_PARAMETER);
 	}
 
-	protected final Integer getBatchSize() {
-		return (Integer) getInputParameter(EMAIL_BATCH_SIZE_INPUT_PARAMETER);
+	protected final Integer getEmailBatchSize() {
+		return getIntegerInputParameter(EMAIL_BATCH_SIZE_INPUT_PARAMETER);
 	}
 
-	protected final String getProtocol() {
-		return (String) getInputParameter(EMAIL_PROTOCOL_INPUT_PARAMETER);
+	private Integer getIntegerInputParameter(String emailBatchSizeInputParameter) {
+		return (Integer) getInputParameter(emailBatchSizeInputParameter);
 	}
 
-	protected final String getFolderName() {
-		return (String) getInputParameter(EMAIL_FOLDER_NAME_INPUT_PARAMETER);
+	protected final String getEmailProtocol() {
+		return getStringInputParameter(EMAIL_PROTOCOL_INPUT_PARAMETER);
 	}
 
-	protected final Boolean isSslEnabled() {
-		return (Boolean) getInputParameter(EMAIL_SSL_ENABLED_INPUT_PARAMETER);
+	private String getStringInputParameter(String parameterName) {
+		return (String) getInputParameter(parameterName);
+	}
+
+	protected final String getEmailFolderName() {
+		return getStringInputParameter(EMAIL_FOLDER_NAME_INPUT_PARAMETER);
+	}
+
+	protected final Boolean isEmailSslEnabled() {
+		return getBooleanInputParameter(EMAIL_SSL_ENABLED_INPUT_PARAMETER);
+	}
+
+	private Boolean getBooleanInputParameter(String parameterName) {
+		return (Boolean) getInputParameter(parameterName);
 	}
 
 	protected final Integer getEmailPort() {
-		return (Integer) getInputParameter(EMAIL_PORT_INPUT_PARAMETER);
+		return getIntegerInputParameter(EMAIL_PORT_INPUT_PARAMETER);
 	}
 
 
 	protected final String getEmailUsername() {
-		return (String) getInputParameter(EMAIL_USERNAME_INPUT_PARAMETER);
+		return getStringInputParameter(EMAIL_USERNAME_INPUT_PARAMETER);
 	}
 
 	protected final String getEmailPassword() {
-		return (String) getInputParameter(EMAIL_PASSWORD_INPUT_PARAMETER);
+		return getStringInputParameter(EMAIL_PASSWORD_INPUT_PARAMETER);
 	}
 
 	protected final void setMails(List mails) {
@@ -70,6 +82,11 @@ public abstract class AbstractEmailReceiverConnectorImpl extends AbstractConnect
 		}
 		try {
 			getEmailPassword();
+		} catch (ClassCastException cce) {
+			throw new ConnectorValidationException("emailPassword type is invalid");
+		}
+		try {
+			isEmailSslEnabled();
 		} catch (ClassCastException cce) {
 			throw new ConnectorValidationException("emailPassword type is invalid");
 		}

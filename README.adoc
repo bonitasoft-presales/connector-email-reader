@@ -6,7 +6,7 @@ This connector can read email with attachments.
 
 
 |===
-|Parameter |Description|Example| Gmail settings
+|Parameter |Description|Example| Gmail settings <1>
 
 |emailProtocol | Protocol | `imap`, `imaps`| `imaps`
 |emailSSL | use SSL (boolean) | `true` , `false`| `true`
@@ -19,7 +19,7 @@ This connector can read email with attachments.
 
 |===
 
-
+<1> see https://support.google.com/mail/answer/7126229?hl=fr[Gmail documentation]
 
 ## Output parameter structure
 

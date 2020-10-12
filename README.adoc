@@ -9,13 +9,13 @@ This connector can read email with attachments.
 |Parameter |Description|Example| Gmail settings
 
 |emailProtocol | Protocol | `imap`, `imaps`| `imaps`
-|emailSSL | use SSL (boolean) | `true` , `false`|
+|emailSSL | use SSL (boolean) | `true` , `false`| `true`
 |emailFolderName | inbox folder name | `Inbox`|
 |emailHost | hostname | |`imap.gmail.com`
 |emailPort | port | | `997` 
-|emailUsername | user name |
-|emailPassword | user password |
-|emailBatchSize | number of fetched emails (Integer) |
+|emailUsername | user name ||
+|emailPassword | user password ||
+|emailBatchSize | number of fetched emails (Integer) ||
 
 |===
 

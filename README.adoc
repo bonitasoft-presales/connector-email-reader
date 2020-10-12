@@ -12,7 +12,7 @@ This connector can read email with attachments.
 |emailSSL | use SSL (boolean) | `true` , `false`|
 |emailFolderName | inbox folder name | `Inbox`|
 |emailHost | hostname | |`imap.gmail.com`
-|emailPort | port | `997` (for imaps)
+|emailPort | port | | `997` 
 |emailUsername | user name |
 |emailPassword | user password |
 |emailBatchSize | number of fetched emails (Integer) |

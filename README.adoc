@@ -2,6 +2,25 @@
 
 This connector can read email with attachments.
 
+## Input parameters
+
+
+|===
+|Parameter |Description|Example
+
+|emailProtocol | Protocol | `imap`, `imaps` (secured: use this for GMail)
+|emailSSL | use SSL (boolean) | `true` (required for imaps, `false`
+|emailFolderName | inbox folder name | `Inbox`
+|emailHost | hostname | `imap.gmail.com`
+|emailPort | port | `997` (for imaps)
+|emailUsername | user name |
+|emailPassword | user password |
+|emailBatchSize | number of fetched emails (Integer) |
+
+|===
+
+
+
 ## Output parameter structure
 
 Result is a list of messages.

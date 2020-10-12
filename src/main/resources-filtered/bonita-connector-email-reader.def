@@ -15,8 +15,9 @@
   <page id="EmailReceiverPage">
     <widget xsi:type="definition:Select" id="protocol" inputName="emailProtocol">
       <items>imap</items>
+      <items>imaps</items>
     </widget>
-    <widget xsi:type="definition:Text" id="EmailHost" inputName="emailHost" showDocuments="true"/>
+    <widget xsi:type="definition:Text" id="EmailHost" inputName="emailHost"/>
     <widget xsi:type="definition:Text" id="EmailPort" inputName="emailPort"/>
     <widget xsi:type="definition:Text" id="emailUID" inputName="emailUsername"/>
     <widget xsi:type="definition:Password" id="emailPassword" inputName="emailPassword"/>

@@ -1,0 +1,47 @@
+# Bonita connector email reader
+
+This connector can read email with attachments.
+
+## Output parameter structure
+
+Result is a list of messages.
+
+```
+[
+ {
+  attachments=[DocumentValue{...}],<1>
+  messageNumber=7,
+  sendDate=Mon Oct 12 10:07:41 CEST 2020,
+  subject=document request [60112],
+  name=walter.bates@acme.com,
+  from=walter.bates@acme.com,
+  body=<html><body><p>body</p></body></html>,
+  receivedDate=Mon Oct 12 10:07:41 CEST 2020
+  },
+]
+```
+<1> `attachments` is a `List<DocumentValue>`
+
+you can add them to a multiple document process data:
+
+```java
+import org.bonitasoft.engine.bpm.document.DocumentValue
+
+def docs= []
+
+mail.each { currentMail->
+    currentMail.attachments.each {
+    DocumentValue docValue = it as DocumentValue
+    docs.add(docValue)
+    }
+}
+docs
+```
+
+
+## Build
+To build the connector project, type the following command at the root of the project : 
+```
+./mvnw clean install
+```
+The built archive can be found in here `target/[artifact id]-[artifact version].zip` after the build.

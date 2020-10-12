@@ -84,7 +84,7 @@ public class EmailReceiverConnectorImpl extends AbstractEmailReceiverConnectorIm
 
 	private Properties getProperties() {
 		Properties properties = new Properties();
-		properties.setProperty("mail.imap.ssl.enable", isSslEnabled() ? "true" : "false");
+		properties.setProperty("mail.imap.ssl.enable", isSslEnabled().toString());
 		return properties;
 	}
 

@@ -10,8 +10,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class MailUtils {
+
+	Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
 	protected String getBody(Message message) throws MessagingException, IOException {
 		Object content = message.getContent();
 		if (content instanceof String) {
@@ -22,7 +26,11 @@ public class MailUtils {
 			for (int i = 0; i < multipart.getCount(); i++) {
 				BodyPart part = multipart.getBodyPart(i);
 				if (part instanceof IMAPBodyPart) {
-					return (String) part.getContent();
+					String contentType = part.getContentType();
+					String bodyContent = part.getContent().toString();
+					logger.info("body content type:" + contentType);
+					logger.info("body content :" + bodyContent);
+					return bodyContent;
 				}
 			}
 		}
@@ -30,19 +38,15 @@ public class MailUtils {
 	}
 
 	protected List<DocumentValue> getAttachments(Message message) throws Exception {
+		List<DocumentValue> result = new ArrayList<>();
 		Object content = message.getContent();
-		if (content instanceof String){
-			return null;
-		}
 		if (content instanceof Multipart) {
 			Multipart multipart = (Multipart) content;
-			List<DocumentValue> result = new ArrayList<>();
 			for (int i = 0; i < multipart.getCount(); i++) {
 				result.addAll(getAttachments(multipart.getBodyPart(i)));
 			}
-			return result;
 		}
-		return null;
+		return result;
 	}
 
 	private List<DocumentValue> getAttachments(BodyPart part) throws Exception {

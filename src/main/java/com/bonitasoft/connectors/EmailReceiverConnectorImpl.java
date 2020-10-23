@@ -3,6 +3,7 @@ package com.bonitasoft.connectors;
 import java.util.*;
 import java.util.logging.Logger;
 
+import org.bonitasoft.engine.bpm.document.DocumentValue;
 import org.bonitasoft.engine.connector.ConnectorException;
 
 import javax.mail.*;
@@ -51,7 +52,6 @@ public class EmailReceiverConnectorImpl extends AbstractEmailReceiverConnectorIm
 		Map<String, Object> map = new HashMap<>();
 		String subject = message.getSubject();
 		int messageNumber = message.getMessageNumber();
-		logger.info("add message with id[" + messageNumber + "] and subject[" + subject + "]");
 		map.put("subject", subject);
 		map.put("messageNumber", messageNumber);
 		InternetAddress mailAddress = (InternetAddress) message.getFrom()[0];
@@ -59,8 +59,21 @@ public class EmailReceiverConnectorImpl extends AbstractEmailReceiverConnectorIm
 		map.put("from", mailAddress.getAddress());
 		map.put("receivedDate", message.getReceivedDate());
 		map.put("sendDate", message.getSentDate());
-		map.put("attachments", mailUtils.getAttachments(message));
+		List<DocumentValue> attachments = mailUtils.getAttachments(message);
+		map.put("attachments", attachments);
 		map.put("body", mailUtils.getBody(message));
+		StringBuilder builder = new StringBuilder()
+				.append("add message with id[")
+				.append(messageNumber)
+				.append("] subject[")
+				.append(subject).append("]")
+				.append(" attachments:");
+		for (DocumentValue attachment : attachments) {
+			builder.append("[")
+					.append(attachment.getFileName())
+					.append("]");
+		}
+		logger.info(builder.toString());
 		mails.add(map);
 		message.setFlag(Flag.SEEN, true);
 	}

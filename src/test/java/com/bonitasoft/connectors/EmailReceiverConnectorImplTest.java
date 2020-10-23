@@ -129,10 +129,6 @@ public class EmailReceiverConnectorImplTest {
 		String body = "some body";
 		String from = "from@localhost";
 		String subject = "some subject";
-		byte[] attachmentByteArray = "attachmentByteArray content".getBytes();
-		String contentType = "text/plain";
-		String filename = "attachmentByteArray.txt";
-		String attachmentDescription = "attachmentByteArray description";
 
 		for (int i=0;i<15;i++){
 			GreenMailUtil.sendTextEmail(to, from, new StringBuilder().append(subject).append(i).toString(), body, greenMail.getSmtp().getServerSetup());

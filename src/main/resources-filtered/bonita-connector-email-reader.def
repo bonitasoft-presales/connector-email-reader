@@ -13,10 +13,7 @@
   <input defaultValue="10" name="emailBatchSize" type="java.lang.Integer"/>
   <output name="mails" type="java.util.List"/>
   <page id="EmailReceiverPage">
-    <widget xsi:type="definition:Select" id="protocol" inputName="emailProtocol">
-      <items>imap</items>
-      <items>imaps</items>
-    </widget>
+    <widget xsi:type="definition:Text" id="protocol" inputName="emailProtocol"/>
     <widget xsi:type="definition:Text" id="EmailHost" inputName="emailHost"/>
     <widget xsi:type="definition:Text" id="EmailPort" inputName="emailPort"/>
     <widget xsi:type="definition:Text" id="emailUID" inputName="emailUsername"/>

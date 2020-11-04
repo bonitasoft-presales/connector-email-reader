@@ -43,11 +43,11 @@ public abstract class AbstractEmailReceiverConnectorImpl extends AbstractConnect
 		return getStringInputParameter(EMAIL_FOLDER_NAME_INPUT_PARAMETER);
 	}
 
-	protected final Boolean isEmailSslEnabled() {
+	protected final Boolean isSslEnabled() {
 		return getBooleanInputParameter(EMAIL_SSL_ENABLED_INPUT_PARAMETER);
 	}
 
-	private Boolean getBooleanInputParameter(String parameterName) {
+	protected Boolean getBooleanInputParameter(String parameterName) {
 		return (Boolean) getInputParameter(parameterName);
 	}
 
@@ -86,9 +86,9 @@ public abstract class AbstractEmailReceiverConnectorImpl extends AbstractConnect
 			throw new ConnectorValidationException("emailPassword type is invalid");
 		}
 		try {
-			isEmailSslEnabled();
+			isSslEnabled();
 		} catch (ClassCastException cce) {
-			throw new ConnectorValidationException("emailPassword type is invalid");
+			throw new ConnectorValidationException("emailSSL type is invalid");
 		}
 
 	}

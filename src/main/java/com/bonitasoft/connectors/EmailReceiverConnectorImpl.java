@@ -1,14 +1,18 @@
 package com.bonitasoft.connectors;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
 
+import org.apache.commons.mail.util.MimeMessageParser;
 import org.bonitasoft.engine.bpm.document.DocumentValue;
 import org.bonitasoft.engine.connector.ConnectorException;
 
+import javax.activation.DataSource;
 import javax.mail.*;
 import javax.mail.Flags.Flag;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.mail.search.FlagTerm;
 
 public class EmailReceiverConnectorImpl extends AbstractEmailReceiverConnectorImpl {
@@ -20,16 +24,20 @@ public class EmailReceiverConnectorImpl extends AbstractEmailReceiverConnectorIm
 
 	@Override
 	protected void executeBusinessLogic() throws ConnectorException {
-		receiveEmail();
+		setMails(readMails());
 	}
 
-	protected void receiveEmail() throws ConnectorException {
+	protected List<Map<String, Object>> readMails() throws ConnectorException {
 		List<Map<String, Object>> mails = new ArrayList();
+
 		try {
-			int messageCount = inboxFolder.getMessageCount();
+			int messageCount;
+			messageCount = inboxFolder.getMessageCount();
+
 			int unreadMessageCount = inboxFolder.getUnreadMessageCount();
 			logger.info("Message count:" + messageCount);
 			logger.info("Unread message count:" + unreadMessageCount);
+
 			Message[] messages = inboxFolder.search(new FlagTerm(new Flags(Flag.SEEN), false));
 			int count = 0;
 			int batchSize = getEmailBatchSize();
@@ -40,42 +48,108 @@ public class EmailReceiverConnectorImpl extends AbstractEmailReceiverConnectorIm
 				extractMessage(mails, message);
 				count++;
 			}
-		} catch (Exception e) {
-			logger.severe("Failed to read mails - " + e.getMessage());
+			return mails;
+		} catch (MessagingException e) {
 			throw new ConnectorException(e);
-		} finally {
-			setMails(mails);
 		}
 	}
 
-	private void extractMessage(List<Map<String, Object>> mails, Message message) throws Exception {
-		Map<String, Object> map = new HashMap<>();
-		String subject = message.getSubject();
-		int messageNumber = message.getMessageNumber();
-		map.put("subject", subject);
-		map.put("messageNumber", messageNumber);
-		InternetAddress mailAddress = (InternetAddress) message.getFrom()[0];
-		map.put("name", mailAddress.getPersonal() == null ? mailAddress.getAddress() : mailAddress.getPersonal());
-		map.put("from", mailAddress.getAddress());
-		map.put("receivedDate", message.getReceivedDate());
-		map.put("sendDate", message.getSentDate());
-		List<DocumentValue> attachments = mailUtils.getAttachments(message);
-		map.put("attachments", attachments);
-		map.put("body", mailUtils.getBody(message));
-		StringBuilder builder = new StringBuilder()
-				.append("add message with id[")
-				.append(messageNumber)
-				.append("] subject[")
-				.append(subject).append("]")
-				.append(" attachments:");
-		for (DocumentValue attachment : attachments) {
-			builder.append("[")
-					.append(attachment.getFileName())
-					.append("]");
+	private void extractMessage(List<Map<String, Object>> mails, Message message) throws ConnectorException {
+		try {
+			Map<String, Object> map = new HashMap<>();
+			if (message instanceof MimeMessage) {
+				logger.info("found MimeMessage");
+				MimeMessageParser parser = new MimeMessageParser((MimeMessage) message);
+				parser.parse();
+				String subject = parser.getSubject();
+				int messageNumber = parser.getMimeMessage().getMessageNumber();
+				String plainContent = parser.getPlainContent();
+				String htmlContent = parser.getHtmlContent();
+
+				map.put("subject", subject);
+				map.put("messageNumber", messageNumber);
+				map.put("name", parser.getFrom());
+				map.put("from", parser.getFrom());
+				map.put("receivedDate", message.getReceivedDate());
+				map.put("sendDate", message.getSentDate());
+				map.put("plainContent", plainContent);
+				String removeSignature = mailUtils.removeSignature(plainContent);
+				map.put("body", mailUtils.sanitize(removeSignature));
+				map.put("htmlContent", htmlContent);
+				if (htmlContent != null) {
+					map.put("htmlContentSanitized", mailUtils.sanitize(htmlContent));
+				} else {
+					map.put("htmlContentSanitized", "");
+				}
+
+				List<DataSource> attachmentList = parser.getAttachmentList();
+				List<DocumentValue> attachments = new ArrayList<>();
+				for (DataSource dataSource : attachmentList) {
+					Optional<DocumentValue> documentValue = mailUtils.getDocumentValue(dataSource);
+					if (documentValue.isPresent()) {
+						attachments.add(documentValue.get());
+					}
+				}
+				map.put("attachments", attachments);
+
+				StringBuilder builder = new StringBuilder()
+						.append("add message with id[")
+						.append(messageNumber)
+						.append("] subject[")
+						.append(subject)
+						.append("]")
+						.append("content:[")
+						.append(plainContent)
+						.append("] attachments:");
+				for (DocumentValue attachment : attachments) {
+					builder.append("[")
+							.append(attachment.getMimeType())
+							.append(" | ")
+							.append(attachment.getFileName())
+							.append("]");
+				}
+				logger.info(builder.toString());
+			} else {
+				logger.info("found message with type:" + message.getClass().getCanonicalName());
+
+				String subject = message.getSubject();
+				int messageNumber = message.getMessageNumber();
+				map.put("subject", subject);
+				map.put("messageNumber", messageNumber);
+				InternetAddress mailAddress = (InternetAddress) message.getFrom()[0];
+				map.put("name", mailAddress.getPersonal() == null ? mailAddress.getAddress() : mailAddress.getPersonal());
+				map.put("from", mailAddress.getAddress());
+				map.put("receivedDate", message.getReceivedDate());
+				map.put("sendDate", message.getSentDate());
+				List<DocumentValue> attachments = mailUtils.getAttachments(message);
+				map.put("attachments", attachments);
+				String body = mailUtils.getBody(message);
+				map.put("bodyOriginal", body);
+				map.put("body", mailUtils.sanitize(body));
+				StringBuilder builder = new StringBuilder()
+						.append("add message with id[")
+						.append(messageNumber)
+						.append("] subject[")
+						.append(subject).append("]")
+						.append("content:[")
+						.append(map)
+						.append("] attachments:");
+				for (DocumentValue attachment : attachments) {
+					builder.append("[")
+							.append(attachment.getFileName())
+							.append("]");
+				}
+				logger.info(builder.toString());
+			}
+			mails.add(map);
+			message.setFlag(Flag.SEEN, true);
+		} catch (MessagingException | IOException e) {
+			e.printStackTrace();
+			logger.severe("can't read message " + e.getMessage());
+			throw new ConnectorException(e);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		logger.info(builder.toString());
-		mails.add(map);
-		message.setFlag(Flag.SEEN, true);
 	}
 
 	@Override
@@ -96,7 +170,7 @@ public class EmailReceiverConnectorImpl extends AbstractEmailReceiverConnectorIm
 	private Properties getProperties() {
 		logParameters();
 		Properties properties = new Properties();
-		Boolean sslEnabled = isEmailSslEnabled();
+		Boolean sslEnabled = isSslEnabled();
 		properties.setProperty("mail.imap.ssl.enable", sslEnabled.toString());
 		return properties;
 	}
@@ -108,7 +182,7 @@ public class EmailReceiverConnectorImpl extends AbstractEmailReceiverConnectorIm
 		logParameterValue(EMAIL_USERNAME_INPUT_PARAMETER, getEmailUsername());
 		logParameterValue(EMAIL_FOLDER_NAME_INPUT_PARAMETER, getEmailFolderName());
 		logParameterValue(EMAIL_BATCH_SIZE_INPUT_PARAMETER, getEmailBatchSize());
-		logParameterValue(EMAIL_SSL_ENABLED_INPUT_PARAMETER, isEmailSslEnabled());
+		logParameterValue(EMAIL_SSL_ENABLED_INPUT_PARAMETER, isSslEnabled());
 	}
 
 	private void logParameterValue(String parameterName, Object parameterValue) {

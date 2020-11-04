@@ -94,10 +94,6 @@ public class EmailReceiverConnectorImplTest {
 		String body = "some body";
 		String from = "from@localhost";
 		String subject = "some subject";
-		byte[] attachmentByteArray = "attachmentByteArray content".getBytes();
-		String contentType = "text/plain";
-		String filename = "attachmentByteArray.txt";
-		String attachmentDescription = "attachmentByteArray description";
 		GreenMailUtil.sendTextEmail(to, from, subject, body, greenMail.getSmtp().getServerSetup());
 		final MimeMessage[] receivedMessages = greenMail.getReceivedMessages();
 		final MimeMessage expectedMessage = receivedMessages[0];
@@ -119,6 +115,7 @@ public class EmailReceiverConnectorImplTest {
 		assertThat(firstMessage.get("subject")).as("should have a subject").isEqualTo(expectedMessage.getSubject());
 		assertThat(firstMessage.get("from")).as("should have a sender").isEqualTo(expectedMessage.getFrom()[0].toString());
 		assertThat(firstMessage.get("body")).as("should have a body message").isEqualTo(body);
+
 	}
 
 	@Test
@@ -130,7 +127,7 @@ public class EmailReceiverConnectorImplTest {
 		String from = "from@localhost";
 		String subject = "some subject";
 
-		for (int i=0;i<15;i++){
+		for (int i = 0; i < 15; i++) {
 			GreenMailUtil.sendTextEmail(to, from, new StringBuilder().append(subject).append(i).toString(), body, greenMail.getSmtp().getServerSetup());
 		}
 		final MimeMessage[] receivedMessages = greenMail.getReceivedMessages();
@@ -154,5 +151,4 @@ public class EmailReceiverConnectorImplTest {
 		assertThat(firstMessage.get("from")).as("should have a sender").isEqualTo(expectedMessage.getFrom()[0].toString());
 		assertThat(firstMessage.get("body")).as("should have a body message").isEqualTo(body);
 	}
-
 }

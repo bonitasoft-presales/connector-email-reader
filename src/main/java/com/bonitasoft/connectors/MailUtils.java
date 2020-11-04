@@ -1,23 +1,71 @@
 package com.bonitasoft.connectors;
 
-import com.sun.mail.imap.IMAPBodyPart;
 import org.apache.commons.lang3.StringUtils;
 import org.bonitasoft.engine.bpm.document.DocumentValue;
+import org.bonitasoft.engine.connector.ConnectorException;
+import org.owasp.html.HtmlPolicyBuilder;
+import org.owasp.html.PolicyFactory;
 
+import javax.activation.DataSource;
 import javax.mail.*;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 public class MailUtils {
 
 	Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-	protected String getBody(Message message) throws MessagingException, IOException {
-		Object content = message.getContent();
+
+	private String getTextFromMimeMultipart(
+			MimeMultipart mimeMultipart) throws MessagingException, IOException {
+		String result = "";
+		int count = mimeMultipart.getCount();
+		for (int i = 0; i < count; i++) {
+			BodyPart bodyPart = mimeMultipart.getBodyPart(i);
+			if (bodyPart.isMimeType("text/plain")) {
+				result = result + "\n" + bodyPart.getContent();
+				break; // without break same text appears twice in my tests
+			} else if (bodyPart.isMimeType("text/html")) {
+				String html = (String) bodyPart.getContent();
+				//result = result + "\n" + org.jsoup.Jsoup.parse(html).text();
+				result += html;
+			} else if (bodyPart.getContent() instanceof MimeMultipart) {
+				result = result + getTextFromMimeMultipart((MimeMultipart) bodyPart.getContent());
+			}
+		}
+		return result;
+	}
+
+	protected String sanitize(String htmlContent) {
+		String messageWithoutSignature = removeSignature(htmlContent);
+
+		PolicyFactory policy = new HtmlPolicyBuilder()
+				.allowAttributes("src").onElements("img")
+				.allowAttributes("href").onElements("a")
+				.allowStandardUrlProtocols()
+				.allowElements(
+						"a", "img"
+				).toFactory();
+
+		return policy.sanitize(messageWithoutSignature);
+	}
+
+	protected String removeSignature(String htmlContent) {
+		String[] split = htmlContent.split("--");
+		return split[0];
+	}
+
+	protected String getBody(Message message) throws MessagingException, IOException, ConnectorException {
+		StringBuffer buffer = new StringBuffer();
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		Object content = getMessageContent(message);
 		if (content instanceof String) {
 			return (String) content;
 		}
@@ -25,21 +73,39 @@ public class MailUtils {
 			Multipart multipart = (Multipart) content;
 			for (int i = 0; i < multipart.getCount(); i++) {
 				BodyPart part = multipart.getBodyPart(i);
-				if (part instanceof IMAPBodyPart) {
-					String contentType = part.getContentType();
-					String bodyContent = part.getContent().toString();
-					logger.info("body content type:" + contentType);
-					logger.info("body content :" + bodyContent);
-					return bodyContent;
+				String contentType = part.getContentType();
+				if (part.getFileName() != null) {
+					logger.info("skip part:[" + part.getFileName() + "]");
+				} else {
+					logger.info("body content type:[" + contentType + "] - [" + part.getClass().getCanonicalName() + "]");
+					part.writeTo(byteArrayOutputStream);
 				}
 			}
 		}
-		return null;
+		byteArrayOutputStream.flush();
+		byteArrayOutputStream.close();
+		String result = new String(byteArrayOutputStream.toByteArray());
+		logger.info("message:" + result);
+		return result;
 	}
+
+	private Object getMessageContent(Message message) throws IOException, MessagingException {
+		try {
+			return message.getContent();
+		} catch (MessagingException e) {
+			// handling the bug
+			if (message instanceof MimeMessage && "Unable to load BODYSTRUCTURE".equalsIgnoreCase(e.getMessage())) {
+				return new MimeMessage((MimeMessage) message).getContent();
+			} else {
+				throw e;
+			}
+		}
+	}
+
 
 	protected List<DocumentValue> getAttachments(Message message) throws Exception {
 		List<DocumentValue> result = new ArrayList<>();
-		Object content = message.getContent();
+		Object content = getMessageContent(message);
 		if (content instanceof Multipart) {
 			Multipart multipart = (Multipart) content;
 			for (int i = 0; i < multipart.getCount(); i++) {
@@ -47,6 +113,15 @@ public class MailUtils {
 			}
 		}
 		return result;
+	}
+
+	protected Optional<DocumentValue> getDocumentValue(DataSource dataSource) throws IOException {
+		DocumentValue documentValue = null;
+		if (dataSource.getName() != null) {
+			documentValue = new DocumentValue(toByteArray(dataSource.getInputStream()), dataSource.getContentType(), dataSource.getName());
+		}
+		Optional<DocumentValue> a = Optional.ofNullable(documentValue);
+		return a;
 	}
 
 	private List<DocumentValue> getAttachments(BodyPart part) throws Exception {

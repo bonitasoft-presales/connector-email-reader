@@ -11,11 +11,12 @@ jobs:
       - name: Checkout mail
         uses: actions/checkout@v2
         with:
+          ref: main
           fetch-depth: 0
 
       - uses: qcastel/github-actions-maven-release@master
         with:
-          release-branch-name: "mail"
+          release-branch-name: "main"
           git-release-bot-name: "release-bot"
           git-release-bot-email: "release-bot@github.com"
           skip-perform: true

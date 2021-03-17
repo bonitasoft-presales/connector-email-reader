@@ -8,19 +8,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout mail
+      - name: Checkout
         uses: actions/checkout@v2
-        with:
-          ref: main
-          fetch-depth: 0
 
-      - uses: qcastel/github-actions-maven-release@master
+      - name: Install Java and Maven
+        uses: actions/setup-java@v1.4.3
         with:
-          release-branch-name: "main"
-          git-release-bot-name: "release-bot"
-          git-release-bot-email: "release-bot@github.com"
-          skip-perform: true
-          access-token: ${{ secrets.GITHUB_TOKEN }}
+          java-version: 11
+          server-id: github
+
+      - name: Configure Git user
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+      - name: Build and test
+        run: ./mvnw clean verify
+
+      - name: Check plugins
+        run: ./mvnw versions:display-plugin-updates
+
+      - name: Prepare release
+        run: ./mvnw release:prepare
 
   create-release:
     name: Create Release
@@ -33,6 +41,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install Java and Maven
+        uses: actions/setup-java@v1.4.3
+        with:
+          java-version: 11
+          server-id: github
+
+      - name: Configure Git user
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+
       - name: 'Get Previous tag'
         id: previoustag
         uses: "WyriHaximus/github-action-get-previous-tag@master"
@@ -41,21 +60,9 @@ jobs:
         id: display-tag
         run: |
           echo "tag: ${{ steps.previoustag.outputs.tag }}"
-
       - uses: actions/checkout@v2
         with:
           ref: ${{ steps.previoustag.outputs.tag }}
-
-      - name: Install Java and Maven
-        uses: actions/setup-java@v1
-        with:
-          java-version: 8
-
-      #      - name: changelog
-      #        uses: scottbrenner/generate-changelog-action@master
-      #        id: Changelog
-      #        env:
-      #          REPO: ${{ github.repository }}
 
       - name: Build and test archetype
         id: build-connector
@@ -102,4 +109,3 @@ jobs:
           asset_path: target/${{ steps.get-version.outputs.final-name }}.zip
           asset_name: ${{ steps.get-version.outputs.final-name }}.zip
           asset_content_type: application/zip
-

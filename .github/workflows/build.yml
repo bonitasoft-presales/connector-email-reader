@@ -13,9 +13,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Install Java and Maven
+        uses: actions/setup-java@v1.4.3
+        with:
+          java-version: 11
+
       - name: Build and test archetype
         run: ./mvnw clean verify
-
 
       - name: Get version from pom
         id: get-version
@@ -33,5 +37,10 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
-          name: ${{ steps.get-version.outputs.final-name }}.zip
-          path: target/${{ steps.get-version.outputs.final-name }}.zip
+          name: "${{ steps.get-version.outputs.final-name }}.zip"
+          path: "target/${{ steps.get-version.outputs.final-name }}.zip"
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: "${{ steps.get-version.outputs.final-name }}.jar"
+          path: "target/${{ steps.get-version.outputs.final-name }}.jar"

@@ -150,8 +150,6 @@ public class EmailReceiverConnectorImpl extends AbstractEmailReceiverConnectorIm
         }
     }
 
-
-
     @Override
     public void connect() throws ConnectorException {
         try {

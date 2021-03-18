@@ -68,7 +68,6 @@ public class MailUtils {
     }
 
     protected String getBody(Message message) throws MessagingException, IOException, ConnectorException {
-        StringBuffer buffer = new StringBuffer();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         Object content = getMessageContent(message);
         if (content instanceof String) {
@@ -89,7 +88,7 @@ public class MailUtils {
         }
         byteArrayOutputStream.flush();
         byteArrayOutputStream.close();
-        String result = new String(byteArrayOutputStream.toByteArray());
+        String result = byteArrayOutputStream.toString();
         logger.info("message:" + result);
         return result;
     }
@@ -98,7 +97,6 @@ public class MailUtils {
         try {
             return message.getContent();
         } catch (MessagingException e) {
-            // handling the bug
             if (message instanceof MimeMessage && "Unable to load BODYSTRUCTURE".equalsIgnoreCase(e.getMessage())) {
                 return new MimeMessage((MimeMessage) message).getContent();
             } else {
@@ -125,8 +123,8 @@ public class MailUtils {
         if (dataSource.getName() != null) {
             documentValue = new DocumentValue(toByteArray(dataSource.getInputStream()), dataSource.getContentType(), dataSource.getName());
         }
-        Optional<DocumentValue> a = Optional.ofNullable(documentValue);
-        return a;
+        Optional<DocumentValue> optionalDocumentValue = Optional.ofNullable(documentValue);
+        return optionalDocumentValue;
     }
 
     private List<DocumentValue> getAttachments(BodyPart part) throws Exception {
@@ -142,7 +140,6 @@ public class MailUtils {
                 return result;
             }
         }
-
         if (content instanceof Multipart) {
             Multipart multipart = (Multipart) content;
             for (int i = 0; i < multipart.getCount(); i++) {
@@ -161,8 +158,7 @@ public class MailUtils {
             buffer.write(data, 0, nRead);
         }
         buffer.flush();
-        byte[] byteArray = buffer.toByteArray();
-        return byteArray;
+        return buffer.toByteArray();
     }
 
     public void logSummary(String subject, int messageNumber, String from, List<DocumentValue> attachments) {

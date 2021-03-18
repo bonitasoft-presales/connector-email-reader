@@ -3,6 +3,8 @@ package com.bonitasoft.connectors;
 import org.apache.commons.mail.util.MimeMessageParser;
 import org.bonitasoft.engine.bpm.document.DocumentValue;
 import org.bonitasoft.engine.connector.ConnectorException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.activation.DataSource;
 import javax.mail.Flags;
@@ -22,11 +24,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 public class EmailReceiverConnectorImpl extends AbstractEmailReceiverConnectorImpl {
 
-    Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    Logger logger = LoggerFactory.getLogger(EmailReceiverConnectorImpl.class);
+
     private Store emailStore;
     private Folder inboxFolder;
     private MailUtils mailUtils;
@@ -79,7 +81,8 @@ public class EmailReceiverConnectorImpl extends AbstractEmailReceiverConnectorIm
                 map.put("messageNumber", messageNumber);
                 InternetAddress address = (InternetAddress) parser.getMimeMessage().getFrom()[0];
                 map.put("name", address.getPersonal());
-                map.put("from", address.getAddress());
+                String from = address.getAddress();
+                map.put("from", from);
                 map.put("receivedDate", message.getReceivedDate());
                 map.put("sendDate", message.getSentDate());
                 map.put("plainContent", plainContent);
@@ -102,23 +105,7 @@ public class EmailReceiverConnectorImpl extends AbstractEmailReceiverConnectorIm
                 }
                 map.put("attachments", attachments);
 
-                StringBuilder builder = new StringBuilder()
-                        .append("add message with id[")
-                        .append(messageNumber)
-                        .append("] subject[")
-                        .append(subject)
-                        .append("]")
-                        .append("content:[")
-                        .append(plainContent)
-                        .append("] attachments:");
-                for (DocumentValue attachment : attachments) {
-                    builder.append("[")
-                            .append(attachment.getMimeType())
-                            .append(" | ")
-                            .append(attachment.getFileName())
-                            .append("]");
-                }
-                logger.info(builder.toString());
+                mailUtils.logSummary(subject, messageNumber, from, attachments);
             } else {
                 logger.info("found message with type:" + message.getClass().getCanonicalName());
 
@@ -151,16 +138,19 @@ public class EmailReceiverConnectorImpl extends AbstractEmailReceiverConnectorIm
                 }
                 logger.info(builder.toString());
             }
+            mailUtils.logEmail(map);
             mails.add(map);
             message.setFlag(Flag.SEEN, true);
         } catch (MessagingException | IOException e) {
             e.printStackTrace();
-            logger.severe("can't read message " + e.getMessage());
+            logger.error("can't read message " + e.getMessage());
             throw new ConnectorException(e);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+
 
     @Override
     public void connect() throws ConnectorException {

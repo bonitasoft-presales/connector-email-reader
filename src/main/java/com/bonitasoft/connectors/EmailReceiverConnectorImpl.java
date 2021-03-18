@@ -83,8 +83,8 @@ public class EmailReceiverConnectorImpl extends AbstractEmailReceiverConnectorIm
                 map.put("name", address.getPersonal());
                 String from = address.getAddress();
                 map.put("from", from);
-                map.put("receivedDate", message.getReceivedDate());
-                map.put("sendDate", message.getSentDate());
+                map.put("receivedDate", message.getReceivedDate().toInstant());
+                map.put("sendDate", message.getSentDate().toInstant());
                 map.put("plainContent", plainContent);
                 String removeSignature = mailUtils.removeSignature(plainContent);
                 map.put("body", mailUtils.sanitize(removeSignature));

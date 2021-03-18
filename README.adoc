@@ -33,17 +33,17 @@ Result is a list of messages.
  {
   "attachments":["DocumentValue":{}],<1>
   "messageNumber":7,
-  "sendDate":"Mon Oct 12 10:07:41 CEST 2020",
+  "sendDate":"2021-03-18T14:24:55Z",<2>
+  "receivedDate":"2021-03-18T14:24:55Z",<2>
   "subject":"document request [60112]",
-  "name":"Walter Bates",<2>
+  "name":"Walter Bates",
   "from":"walter.bates@acme.com",
   "body":"<html><body><p>body</p></body></html>",
-  "receivedDate":"Mon Oct 12 10:07:41 CEST 2020"
   }
 ]
 ----
 <1> `attachments` is a `List<DocumentValue>`
-<2> may depend on email capabilities
+<2> dates are converted to `java.util.Instant`
 
 you can add them to a multiple document process data:
 
@@ -57,6 +57,24 @@ mail.each { currentMail->
     currentMail.attachments.each {
     DocumentValue docValue = it as DocumentValue
     docs.add(docValue)
+    }
+}
+docs
+----
+
+For contract, convert thme to File
+
+[source,Groovy]
+----
+import org.bonitasoft.engine.bpm.document.DocumentValue
+
+def docs= []
+
+mail.each { currentMail->
+    currentMail.attachments.each {
+    DocumentValue documentValue = it as DocumentValue
+	FileInputValue fileInputValue= new FileInputValue(documentValue.fileName ,documentValue.mimeType, documentValue.content)
+	docs.add(fileInputValue)
     }
 }
 docs

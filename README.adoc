@@ -1,12 +1,11 @@
-image:https://github.com/laurentleseigneur/bonita-connector-email-reader/actions/workflows/build.yml/badge.svg[]
-image:https://github.com/laurentleseigneur/bonita-connector-email-reader/actions/workflows/tagAndRelease.yml/badge.svg[]
-
-# Bonita connector email reader
+= Bonita connector email reader
 
 This connector can read email with attachments.
 
-## Input parameters
+image:https://github.com/laurentleseigneur/bonita-connector-email-reader/actions/workflows/build.yml/badge.svg[]
+image:https://github.com/laurentleseigneur/bonita-connector-email-reader/actions/workflows/tagAndRelease.yml/badge.svg[]
 
+== Input parameters
 
 |===
 |Parameter |Description|Example| Gmail settings
@@ -15,7 +14,7 @@ This connector can read email with attachments.
 |emailSSL | use SSL (boolean) | `true` , `false`| `true`
 |emailFolderName | inbox folder name | `Inbox`|
 |emailHost | hostname | |`imap.gmail.com`
-|emailPort | port | | `993` 
+|emailPort | port | | `993`
 |emailUsername | user name ||
 |emailPassword | user password ||
 |emailBatchSize | number of fetched emails (Integer) ||
@@ -24,29 +23,32 @@ This connector can read email with attachments.
 
 see https://support.google.com/mail/answer/7126229?hl=fr[Gmail documentation] for more information.
 
-## Output parameter structure
+== Output parameter structure
 
 Result is a list of messages.
 
-```
+[source,Json]
+----
 [
  {
-  attachments=[DocumentValue{...}],<1>
-  messageNumber=7,
-  sendDate=Mon Oct 12 10:07:41 CEST 2020,
-  subject=document request [60112],
-  name=walter.bates@acme.com,
-  from=walter.bates@acme.com,
-  body=<html><body><p>body</p></body></html>,
-  receivedDate=Mon Oct 12 10:07:41 CEST 2020
-  },
+  "attachments":["DocumentValue":{}],<1>
+  "messageNumber":7,
+  "sendDate":"Mon Oct 12 10:07:41 CEST 2020",
+  "subject":"document request [60112]",
+  "name":"Walter Bates",<2>
+  "from":"walter.bates@acme.com",
+  "body":"<html><body><p>body</p></body></html>",
+  "receivedDate":"Mon Oct 12 10:07:41 CEST 2020"
+  }
 ]
-```
+----
 <1> `attachments` is a `List<DocumentValue>`
+<2> may depend on email capabilities
 
 you can add them to a multiple document process data:
 
-```java
+[source,Groovy]
+----
 import org.bonitasoft.engine.bpm.document.DocumentValue
 
 def docs= []
@@ -58,12 +60,15 @@ mail.each { currentMail->
     }
 }
 docs
-```
+----
 
+== Build
 
-## Build
-To build the connector project, type the following command at the root of the project : 
-```
+To build the connector project, type the following command at the root of the project :
+
+[source,shell]
+----
 ./mvnw clean install
-```
+----
+
 The built archive can be found in here `target/[artifact id]-[artifact version].zip` after the build.

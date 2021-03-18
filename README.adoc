@@ -1,5 +1,5 @@
-https://github.com/laurentleseigneur/bonita-connector-email-reader/actions/workflows/build.yml/badge.svg 
-https://github.com/laurentleseigneur/bonita-connector-email-reader/actions/workflows/tagAndRelease.yml/badge.svg
+image:https://github.com/laurentleseigneur/bonita-connector-email-reader/actions/workflows/build.yml/badge.svg[]
+image:https://github.com/laurentleseigneur/bonita-connector-email-reader/actions/workflows/tagAndRelease.yml/badge.svg[]
 
 # Bonita connector email reader
 

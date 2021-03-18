@@ -1,3 +1,6 @@
+https://github.com/laurentleseigneur/bonita-connector-email-reader/actions/workflows/build.yml/badge.svg[Build]
+https://github.com/laurentleseigneur/bonita-connector-email-reader/actions/workflows/tagAndRelease.yml/badge.svg[Tag and Release]
+
 # Bonita connector email reader
 
 This connector can read email with attachments.

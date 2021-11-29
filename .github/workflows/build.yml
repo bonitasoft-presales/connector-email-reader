@@ -13,10 +13,18 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install Java and Maven
-        uses: actions/setup-java@v1.4.3
+      - name: Install Java and Maven - setup settings.xml
+        uses: actions/setup-java@v2
         with:
           java-version: 11
+          distribution: 'temurin'
+          server-id: github
+          cache: 'maven'
+
+      - name: Configure Git user
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
 
       - name: Build and test archetype
         run: ./mvnw clean verify
@@ -34,13 +42,8 @@ jobs:
         run: |
           echo "version: ${{ steps.get-version.outputs.version }}"
           echo "final_name: ${{ steps.get-version.outputs.final-name }}"
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: "${{ steps.get-version.outputs.final-name }}.zip"
-          path: "target/${{ steps.get-version.outputs.final-name }}.zip"
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: "${{ steps.get-version.outputs.final-name }}.jar"
-          path: "target/${{ steps.get-version.outputs.final-name }}.jar"
+      
+      - name: Publish to Github Package
+        run: ./mvnw --batch-mode deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

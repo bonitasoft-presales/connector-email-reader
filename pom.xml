@@ -8,6 +8,10 @@
     <packaging>jar</packaging>
 
     <properties>
+        <!-- Github-->
+        <github.owner>laurentleseigneur</github.owner>
+        <github.repo>bonita-connector-email-reader</github.repo>
+
         <!-- Maven -->
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -192,9 +196,21 @@
         </plugins>
     </build>
     <scm>
-        <url>https://github.com/laurentleseigneur/bonita-connector-email-reader</url>
-        <connection>scm:git:https://github.com/laurentleseigneur/bonita-connector-email-reader.git</connection>
-        <developerConnection>scm:git:https://github.com/laurentleseigneur/bonita-connector-email-reader.git</developerConnection>
+        <url>https://github.com/${github.owner}/${github.repo}</url>
+        <developerConnection>scm:git:${project.scm.url}.git</developerConnection>
+        <connection>scm:git:${project.scm.url}.git</connection>
         <tag>HEAD</tag>
     </scm>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>github</id>
+            <name>Github Package</name>
+            <url>https://maven.pkg.github.com/${github.owner}/${github.repo}</url>
+        </snapshotRepository>
+        <repository>
+            <id>github</id>
+            <name>Github Package</name>
+            <url>https://maven.pkg.github.com/${github.owner}/${github.repo}</url>
+        </repository>
+    </distributionManagement>
 </project>

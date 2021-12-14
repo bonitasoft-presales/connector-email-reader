@@ -3,7 +3,7 @@
 
     <groupId>com.bonitasoft.connectors</groupId>
     <artifactId>bonita-connector-email-reader</artifactId>
-    <version>1.5</version>
+    <version>1.6-SNAPSHOT</version>
     <name>bonita-connector-email-reader</name>
     <packaging>jar</packaging>
 
@@ -214,7 +214,7 @@
         <url>https://github.com/${github.owner}/${github.repo}</url>
         <developerConnection>scm:git:${project.scm.url}.git</developerConnection>
         <connection>scm:git:${project.scm.url}.git</connection>
-        <tag>bonita-connector-email-reader-1.5</tag>
+        <tag>HEAD</tag>
     </scm>
     <distributionManagement>
         <snapshotRepository>

@@ -2,8 +2,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.bonitasoft.connectors</groupId>
-    <artifactId>bonita-connector-email-reader</artifactId>
+    <groupId>com.bonitasoft.connector</groupId>
+    <artifactId>connector-email-reader</artifactId>
     <version>1.6-SNAPSHOT</version>
     <name>bonita-connector-email-reader</name>
     <packaging>jar</packaging>

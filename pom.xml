@@ -9,8 +9,8 @@
 
     <properties>
         <!-- Github-->
-        <github.owner>laurentleseigneur</github.owner>
-        <github.repo>bonita-connector-email-reader</github.repo>
+        <github.owner>bonitasoft-presales</github.owner>
+        <github.repo>connector-email-reader</github.repo>
 
         <!-- Maven -->
         <java.version>11</java.version>

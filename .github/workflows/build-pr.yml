@@ -1,0 +1,24 @@
+name: Build Pull Request
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Java and Maven - setup settings.xml
+        uses: actions/setup-java@v2
+        with:
+          java-version: 11
+          distribution: 'temurin'
+          server-id: github
+          cache: 'maven'
+
+
+      - name: Maven build
+        run: ./mvnw clean verify

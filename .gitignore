@@ -3,3 +3,6 @@ target
 /bonita-connector-email-reader.iml
 /README.html
 /README.pdf
+.settings/
+.project
+.classpath

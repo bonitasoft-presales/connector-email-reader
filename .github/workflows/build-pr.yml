@@ -19,6 +19,11 @@ jobs:
           server-id: github
           cache: 'maven'
 
-
       - name: Maven build
         run: ./mvnw clean verify
+        
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          files: "target/surefire-reports/*.xml"

@@ -39,9 +39,9 @@
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <maven-assembly-plugin.version>3.1.1</maven-assembly-plugin.version>
+        <maven-assembly-plugin.version>3.3.0</maven-assembly-plugin.version>
         <groovy-maven-plugin.version>2.1.1</groovy-maven-plugin.version>
-        <groovy-all.version>2.4.16</groovy-all.version>
+        <groovy.version>3.0.10</groovy.version>
         <maven-surefire-plugin.version>3.0.0-M4</maven-surefire-plugin.version>
 
         <!-- jackson-databind-2.12.3.jar in bonita common : CVE-2020-36518 -->
@@ -68,7 +68,7 @@
         <dependency>
             <groupId>com.sun.mail</groupId>
             <artifactId>jakarta.mail</artifactId>
-            <version>1.6.3</version>
+            <version>1.6.7</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
@@ -158,8 +158,8 @@
                     <dependencies>
                         <dependency>
                             <groupId>org.codehaus.groovy</groupId>
-                            <artifactId>groovy-all</artifactId>
-                            <version>${groovy-all.version}</version>
+                            <artifactId>groovy</artifactId>
+                            <version>${groovy.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>

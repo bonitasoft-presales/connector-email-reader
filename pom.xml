@@ -43,7 +43,7 @@
         <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
 
         <!-- jackson-databind-2.12.3.jar in bonita common : CVE-2020-36518 -->
-        <jackson-version>2.13.2</jackson-version>
+        <jackson-version>2.13.2.2</jackson-version>
     </properties>
     <dependencyManagement>
         <dependencies>

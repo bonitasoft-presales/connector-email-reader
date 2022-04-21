@@ -55,8 +55,8 @@ def docs= []
 
 mail.each { currentMail->
     currentMail.attachments.each {
-    DocumentValue docValue = it as DocumentValue
-    docs.add(docValue)
+        DocumentValue docValue = it as DocumentValue
+        docs.add(docValue)
     }
 }
 docs
@@ -72,9 +72,9 @@ def docs= []
 
 mail.each { currentMail->
     currentMail.attachments.each {
-    DocumentValue documentValue = it as DocumentValue
-	FileInputValue fileInputValue= new FileInputValue(documentValue.fileName ,documentValue.mimeType, documentValue.content)
-	docs.add(fileInputValue)
+        DocumentValue documentValue = it as DocumentValue
+	    FileInputValue fileInputValue= new FileInputValue(documentValue.fileName ,documentValue.mimeType, documentValue.content)
+	    docs.add(fileInputValue)
     }
 }
 docs

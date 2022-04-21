@@ -40,7 +40,7 @@
         <maven-assembly-plugin.version>3.3.0</maven-assembly-plugin.version>
         <groovy-maven-plugin.version>2.1.1</groovy-maven-plugin.version>
         <groovy.version>3.0.10</groovy.version>
-        <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>3.0.0-M6</maven-surefire-plugin.version>
 
         <!-- jackson-databind-2.12.3.jar in bonita common : CVE-2020-36518 -->
         <!-- jackson-databind-2.13.2.jar: CVE-2020-36518(7.5) -->

@@ -44,7 +44,7 @@
 
         <!-- jackson-databind-2.12.3.jar in bonita common : CVE-2020-36518 -->
         <!-- jackson-databind-2.13.2.jar: CVE-2020-36518(7.5) -->
-        <jackson-version>2.13.2.2</jackson-version>
+        <jackson-version>2.13.3</jackson-version>
     </properties>
     <dependencyManagement>
         <dependencies>

@@ -35,17 +35,17 @@ jobs:
       - name: Display packages names
         run: echo "${{ steps.pom-info.outputs.group-id }}.${{ steps.pom-info.outputs.artifact-id }}"
 
-      - name: Clean old packages - keep last 3
+      - name: Clean old packages - keep last 2
         uses: smartsquaregmbh/delete-old-packages@v0.3.2
         with:
-          keep: 3
+          keep: 2
           names: |
             "${{ steps.pom-info.outputs.group-id }}.${{ steps.pom-info.outputs.artifact-id }}"
 
-      - name: Clean old releases - keep last 3
+      - name: Clean old releases - keep last 2
         uses: dev-drprasad/delete-older-releases@v0.2.0
         with:
-          keep_latest: 3
+          keep_latest: 2
           delete_tags: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

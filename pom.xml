@@ -3,7 +3,7 @@
 
     <groupId>com.bonitasoft.connector</groupId>
     <artifactId>connector-email-reader</artifactId>
-    <version>1.10-SNAPSHOT</version>
+    <version>2.0-SNAPSHOT</version>
     <name>bonita-connector-email-reader</name>
     <packaging>jar</packaging>
 
@@ -13,7 +13,7 @@
         <github.repo>connector-email-reader</github.repo>
 
         <!-- Maven -->
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.build.timestamp.format>yyyy.MM.dd-hh.mm</maven.build.timestamp.format>
@@ -26,21 +26,23 @@
         <connector-main-class>com.bonitasoft.connectors.EmailReceiverConnectorImpl</connector-main-class>
 
         <!-- Bonita -->
-        <bonita.engine.version>7.14.0</bonita.engine.version>
+        <bonita-runtime.version>10.2.0</bonita-runtime.version>
+<!--        <bonita.engine.version>10.2.0</bonita.engine.version>-->
 
         <!-- Tests -->
-        <junit-jupiter-engine.version>5.8.2</junit-jupiter-engine.version>
-        <assertj-core.version>3.23.1</assertj-core.version>
-        <mockito-core.version>4.5.1</mockito-core.version>
-        <logback-classic.version>1.2.11</logback-classic.version>
+        <junit-jupiter-engine.version>5.10.0</junit-jupiter-engine.version>
+        <assertj-core.version>3.24.2</assertj-core.version>
+        <mockito-core.version>5.6.0</mockito-core.version>
+        <logback-classic.version>1.2.12</logback-classic.version>
 
         <!-- Maven plugins -->
-        <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <maven.compiler.release>${java.version}</maven.compiler.release>
-        <maven-assembly-plugin.version>3.3.0</maven-assembly-plugin.version>
+        <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
         <groovy-maven-plugin.version>2.1.1</groovy-maven-plugin.version>
+        <groovy-xml.version>3.0.19</groovy-xml.version>
         <groovy.version>3.0.13</groovy.version>
-        <maven-surefire-plugin.version>3.0.0-M6</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>3.2.2</maven-surefire-plugin.version>
 
         <!-- jackson-databind-2.12.3.jar in bonita common : CVE-2020-36518 -->
         <!-- jackson-databind-2.13.2.jar: CVE-2020-36518(7.5) -->
@@ -48,6 +50,13 @@
     </properties>
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.bonitasoft.runtime</groupId>
+                <artifactId>bonita-runtime-bom</artifactId>
+                <version>${bonita-runtime.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
@@ -67,10 +76,14 @@
         <dependency>
             <artifactId>bonita-common</artifactId>
             <groupId>org.bonitasoft.engine</groupId>
-            <version>${bonita.engine.version}</version>
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.15.0</version>
+        </dependency>
         <dependency>
             <groupId>com.sun.mail</groupId>
             <artifactId>jakarta.mail</artifactId>
@@ -157,8 +170,8 @@
                     <dependencies>
                         <dependency>
                             <groupId>org.codehaus.groovy</groupId>
-                            <artifactId>groovy</artifactId>
-                            <version>${groovy.version}</version>
+                            <artifactId>groovy-xml</artifactId>
+                            <version>${groovy-xml.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
